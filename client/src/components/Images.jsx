@@ -5,7 +5,7 @@ import { IoMdClose } from 'react-icons/io'
 
 const Images = ({data}) => {
 
-  const [ likes, setItemLike ] = useState(false)
+  const [ likes, setItemLike ] = useState()
   const [ imgEnlarge, setImgSize ] = useState(false)
   const [ selectedImg, setImg] = useState('')
 
@@ -14,56 +14,62 @@ const Images = ({data}) => {
     return formatted;
   }
 
-  try {
-    
-  } catch (error) {
-    
-  }
-
   const getImg = (img) => {
       setImgSize(true)
       setImg(img)
   }
 
-  const addLike = () => {
-    console.log(imgEnlarge)
+  const addLike = (id) => {
+    setItemLike(...id)
   }
+
+  
 
   return (
     <>
-      {
-        imgEnlarge === true && (
+      {imgEnlarge && (
         <LargeFormat>
           <Close onClick={() => setImgSize(false)}>
             <IoMdClose />
           </Close>
           <Popup>
-            <img src={selectedImg} alt='selected' />
+            <img src={selectedImg} alt="selected" />
           </Popup>
-      </LargeFormat>
-        )
-      }
+        </LargeFormat>
+      )}
       <ImageGallery>
         {data.map((photo) => (
-          <Container key={photo.id}>
+          <Container key={photo.id} onClick={() => getImg(photo.urls.regular)}>
             <ImageContainer>
               <img src={photo.urls.regular} alt={photo.alt_description} />
             </ImageContainer>
-            <LinkBlock onClick={() => getImg(photo.urls.regular)}>
-              <Icon onClick={() => {
-                setImgSize(false);
-                setImg(null);
-                addLike()
-                }}>
-                <div>
+            <LinkBlock>
+              <Icon
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addLike(photo.id);
+                }}
+              >
+                <div className="like">
                   <FaHeart />
                 </div>
               </Icon>
-              <Profile>
-                <Creator onClick={() => {console.log('creator')}}>
-                  <img src={photo.user.profile_image.medium} alt="user" />
-                </Creator>
-                <CreatorName>{capitalize(photo.user.first_name)}</CreatorName>
+
+              <Profile
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <a
+                  href={photo.user.links.html}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Creator>
+                    <img src={photo.user.profile_image.medium} alt="user" />
+                  </Creator>
+                  <CreatorName>{capitalize(photo.user.first_name)}</CreatorName>
+                </a>
               </Profile>
             </LinkBlock>
           </Container>
@@ -135,6 +141,16 @@ const ImageGallery = styled.div`
     -moz-column-width: 50%;
     column-width: 50%;
   }
+
+  @media screen and (max-width: 480px) {
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
+    -webkit-column-width: 100%;
+    -moz-column-width: 100%;
+    column-width: 100%;
+    padding: 4rem 0;
+  }
 `;
 
 const Container = styled.div`
@@ -147,6 +163,10 @@ const ImageContainer = styled.div`
   img {
     width: 100%;
     padding-bottom: 15px;
+
+    @media screen and (max-width: 480px) {
+      padding-bottom: 0;
+    }
   }
 `;
 
@@ -167,6 +187,16 @@ const LinkBlock = styled.div`
 
   &:hover {
     opacity: 1;
+  }
+
+  @media screen and (max-width: 480px) {
+    position: static;
+    background: transparent;
+    opacity: 1;
+    flex-direction: row-reverse;
+    padding: .5rem 1rem 5rem 1rem;
+    cursor: default;
+  
   }
 `;
 
@@ -194,17 +224,31 @@ const Profile = styled.div`
   align-items: center;
   padding: 2rem;
   cursor: pointer;
-`
+
+  a {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 480px) {
+    padding: 0;
+  }
+`;
 
 const CreatorName = styled.div`
   color: #fff;
   font-size: 1.8rem;
-  padding-left: .5rem;
+  padding-left: 0.5rem;
 
   @media screen and (max-width: 900px) {
     font-size: 1.4rem;
   }
-`
+
+  @media screen and (max-width: 480px) {
+    color: #404040;
+  }
+`;
 
 const Icon = styled.div`
   display: flex;
@@ -212,19 +256,36 @@ const Icon = styled.div`
   padding: 1.5rem;
   cursor: pointer;
 
-  div {
-    color: #fff;
-    background-color: #ff1493;
+  .like {
+    color: #c7c3c3;
+    background-color: #fff;
     border-radius: 5px;
     font-size: 35px;
-    width: 35px;
+    width: 40px;
     height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
 
     &:hover {
-      background-color: #e6007a;
+      color: #000;
     }
+  }
+
+  .like__clicked {
+    color: #fff;
+    background-color: #ff1493;
+
+    &:hover {
+      background-color: #ca046e;
+      color: #fff;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    padding: 0;
+    border: 1px solid #c4c1c1;
+    border-radius: 5px;
   }
 `;

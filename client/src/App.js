@@ -8,7 +8,7 @@ const App = ()  => {
   const [data, setPhotosResponse] = useState([]);
   const [page, setPage] = useState(1);
   const [phrase, setPhrase] = useState('random');
-  const api = "0mlTAtb3057obU5Q167m6QqhVNhY7OIhcdPpV0D1bgE";
+  const api = process.env.REACT_APP_API_KEY;
 
   const searchPhotos = (term) => {
     setPhrase(term)
@@ -23,7 +23,7 @@ const App = ()  => {
         `https://api.unsplash.com/search/photos?page=${page}&per_page=17&query=${phrase}&client_id=${api}`
       )
       .then((response) => {
-        console.log(response.data.results[0])
+        console.log(response.data.results)
         data.length
           ? setPhotosResponse([...data, ...response.data.results])
           : setPhotosResponse(response.data.results);
