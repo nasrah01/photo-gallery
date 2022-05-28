@@ -3,11 +3,13 @@ import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Header from "./components/Header";
 import Images from './components/Images'
+import styled from 'styled-components'
 
 const App = ()  => {
   const [data, setPhotosResponse] = useState([]);
   const [page, setPage] = useState(1);
   const [phrase, setPhrase] = useState('random');
+  const [ resultsError, setResultsError ] = useState(false)
   const api = process.env.REACT_APP_API_KEY;
 
   const searchPhotos = (term) => {
@@ -15,7 +17,7 @@ const App = ()  => {
     setPhotosResponse([])
   }
 
-  // when input is empty, when request returns no results
+  // when request returns no results
 
   const getPhotos = () => {
     axios
@@ -23,10 +25,15 @@ const App = ()  => {
         `https://api.unsplash.com/search/photos?page=${page}&per_page=17&query=${phrase}&client_id=${api}`
       )
       .then((response) => {
-        console.log(response.data.results)
-        data.length
-          ? setPhotosResponse([...data, ...response.data.results])
-          : setPhotosResponse(response.data.results);
+        if(response.data.results.length === 0) {
+          setResultsError(true)
+          console.log('nothing found')
+        } else {
+          console.log(response.data.results.length);
+          data.length
+            ? setPhotosResponse([...data, ...response.data.results])
+            : setPhotosResponse(response.data.results);
+        }
       })
       .catch(() => {
         console.log("something went wrong with request");
@@ -42,6 +49,11 @@ const App = ()  => {
   return (
     <div>
       <Header onSearch={searchPhotos}/>
+      {
+        resultsError && (
+        <Results>Nothing found</Results>
+        )
+      }
       <div>
         <InfiniteScroll
           dataLength={data.length}
@@ -57,5 +69,7 @@ const App = ()  => {
 }
 
 export default App;
+
+const Results = styled.div``
 
 

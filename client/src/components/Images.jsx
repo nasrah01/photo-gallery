@@ -2,6 +2,8 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import { FaHeart } from "react-icons/fa";
 import { IoMdClose } from 'react-icons/io'
+import { AiFillLike } from 'react-icons/ai'
+import { FiInstagram } from 'react-icons/fi'
 
 const Images = ({data}) => {
 
@@ -17,6 +19,7 @@ const Images = ({data}) => {
   const getImg = (img) => {
       setImgSize(true)
       setImg(img)
+      console.log(imgEnlarge)
   }
 
   const addLike = (id) => {
@@ -33,13 +36,67 @@ const Images = ({data}) => {
             <IoMdClose />
           </Close>
           <Popup>
-            <img src={selectedImg} alt="selected" />
+            <UserDetails>
+              <Avatar>
+                <img
+                  src={selectedImg.user.profile_image.large}
+                  alt={selectedImg.alt_description}
+                />
+              </Avatar>
+              <UserDetail>
+                <div className="fullname">
+                  <p>
+                    {!selectedImg.user.first_name
+                      ? ""
+                      : capitalize(selectedImg.user.first_name)}
+                  </p>
+                  <p>
+                    {!selectedImg.user.last_name
+                      ? ""
+                      : capitalize(selectedImg.user.last_name)}
+                  </p>
+                </div>
+                <p className="username">@{selectedImg.user.username}</p>
+              </UserDetail>
+            </UserDetails>
+            <Photo>
+              <img
+                src={selectedImg.urls.regular}
+                alt={selectedImg.alt_description}
+              />
+            </Photo>
+            <UserStats>
+              <div>
+                <h2 className="icon">
+                  <AiFillLike />
+                </h2>
+                <p>{selectedImg.likes}</p>
+              </div>
+              <div>
+                <h2 className="location">Location</h2>
+                <p>
+                  {!selectedImg.user.location
+                    ? "--"
+                    : selectedImg.user.location}
+                </p>
+              </div>
+              <div>
+                <h2 className="icon">
+                  <FiInstagram />
+                </h2>
+                <p>
+                  {!selectedImg.user.instagram_username
+                    ? "--"
+                    : selectedImg.user.instagram_username}
+                </p>
+              </div>
+            </UserStats>
           </Popup>
         </LargeFormat>
       )}
       <ImageGallery>
         {data.map((photo) => (
-          <Container key={photo.id} onClick={() => getImg(photo.urls.regular)}>
+          <Container key={photo.id} onClick={() => getImg(photo)}>
             <ImageContainer>
               <img src={photo.urls.regular} alt={photo.alt_description} />
             </ImageContainer>
@@ -100,12 +157,95 @@ const Popup = styled.div`
   width: 80%;
   height: 95%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem;
+
+  @media screen and (max-width: 900px) {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const UserDetails = styled.div`
+  display: flex;
   align-items: center;
+`;
+
+const Avatar = styled.div`
+  height: 50px;
+  width: 50px;
 
   img {
-    width: auto;
-    height: 70%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+`;
+
+const UserDetail = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-left: 1rem;
+
+  .fullname {
+    display: flex;
+    
+    p {
+      font-size: 1.6rem;
+    }
+
+    p:first-child {
+      padding-right: .5rem;
+    }
+  }
+
+  .username {
+    font-size: 1.4rem;
+    color: #404040;
+  }
+`
+
+const Photo = styled.div`
+  display: flex;
+  justify-content: center;
+  height: 80%;
+
+  img {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    object-fit: contain;
+  }
+`;
+
+const UserStats = styled.div`
+  display: flex;
+  align-items: flex-end;
+
+  div {
+    padding-right: 8rem;
+
+    p {
+      font-size: 1.5rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      padding-right: 4rem;
+    }
+  }
+
+  .location {
+    font-size: 1.5rem;
+    color: #a9a9a9;
+    font-weight: normal;
+    padding-bottom: 0.5rem;
+  }
+
+  .icon {
+    font-size: 3rem;
+    color: #a9a9a9;
   }
 `;
 
@@ -117,7 +257,11 @@ const Close = styled.div`
   color: #fff;
   font-size: 36px;
   cursor: pointer;
-`
+
+  @media screen and (max-width: 900px) {
+    color: #000;
+  }
+`;
 
 const ImageGallery = styled.div`
   -webkit-column-count: 3;
@@ -238,7 +382,7 @@ const Profile = styled.div`
 
 const CreatorName = styled.div`
   color: #fff;
-  font-size: 1.8rem;
+  font-size: clamp(1.6rem, 1vw, 1.8rem);
   padding-left: 0.5rem;
 
   @media screen and (max-width: 900px) {
@@ -257,7 +401,7 @@ const Icon = styled.div`
   cursor: pointer;
 
   .like {
-    color: #c7c3c3;
+    color: #a9a9a9;
     background-color: #fff;
     border-radius: 5px;
     font-size: 35px;

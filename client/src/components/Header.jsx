@@ -10,33 +10,41 @@ const SearchBar = ({onSearch}) => {
 
     const handleSubmit = (e) => {
       e.preventDefault();
-        onSearch(queryInput);
+
+      const term = queryInput.trim();
+
+      if(term) {
+        onSearch(term);
         setQueryResults("");
+      }
     };
 
   return (
     <HeaderContainer>
       <TitleContainer>
         <div className="camera">
-        <BsCamera />
+          <BsCamera />
         </div>
         <h1>Photos</h1>
       </TitleContainer>
       <SearchContainer>
-        <Heading>
-          The best free stock photos, <br /> royality free images by creators
-        </Heading>
-        <Form onSubmit={handleSubmit}>
-          <input
-            name="text"
-            placeholder="Search images"
-            value={queryInput}
-            onChange={(e) => setQueryResults(e.target.value)}
-          />
-          <button type='submit'>
-            <BsSearch />
-          </button>
-        </Form>
+        <Search>
+          <Heading>
+            The best free stock photos, <br /> royality free images by creators
+          </Heading>
+          <Form onSubmit={handleSubmit}>
+            <input
+              name="text"
+              placeholder="Search free high-resolution photos"
+              autoComplete='off'
+              value={queryInput}
+              onChange={(e) => setQueryResults(e.target.value)}
+            />
+            <button type="submit">
+              <BsSearch />
+            </button>
+          </Form>
+        </Search>
       </SearchContainer>
     </HeaderContainer>
   );
@@ -82,7 +90,7 @@ const TitleContainer = styled.div`
 
   h1 {
     color: #7b28a4;
-    font-size: clamp(2.5rem, 3vw, 4.5rem);
+    font-size: clamp(2rem, 2vw, 3.5rem);
     margin-top: 0.5rem;
     font-family: "Yellowtail", cursive;
   }
@@ -91,13 +99,17 @@ const TitleContainer = styled.div`
 const SearchContainer = styled.div`
   flex: 1;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 `
 
+const Search = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 const Heading = styled.h2`
-  font-size: clamp(2rem, 2.5vw, 4rem);
+  font-size: clamp(1.8rem, 2vw, 3.5rem);
   color: #fff;
   z-index: 100;
 `
@@ -111,11 +123,11 @@ const Form = styled.form`
   background-color: #fff;
   width: 35vw;
   border-radius: 5px;
-  padding: 1rem 0.8rem;
+  padding: 0.8rem;
 
   input {
     flex: 1;
-    font-size: clamp(1.8rem, 1.5vw, 2rem);
+    font-size: clamp(1.6rem, 1vw, 2rem);
     color: #404040;
     border: none;
     outline: none;
