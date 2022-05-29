@@ -15,7 +15,6 @@ const SearchBar = ({onSearch}) => {
 
       if(term) {
         onSearch(term);
-        setQueryResults("");
       }
     };
 
