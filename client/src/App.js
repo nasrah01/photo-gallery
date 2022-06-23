@@ -6,10 +6,12 @@ import Images from './components/Images'
 import styled from 'styled-components'
 import { AiFillPicture } from 'react-icons/ai'
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
+import Loader from "./components/Loader";
 
 const App = ()  => {
   const [data, setPhotosResponse] = useState([]);
-  const [stats, setResultStats] = useState()
+  const [stats, setResultStats] = useState();
+  const [isLoaded, setIsLoaded] = useState(false);
   const [page, setPage] = useState(1);
   const [phrase, setPhrase] = useState('random');
   const api = process.env.REACT_APP_API_KEY;
@@ -25,6 +27,7 @@ const App = ()  => {
         `https://api.unsplash.com/search/photos?page=${page}&per_page=17&query=${phrase}&client_id=${api}`
       );
       console.log(response)
+      setIsLoaded(true)
       data.length
         ? setPhotosResponse([...data, ...response.data.results])
         : setPhotosResponse(response.data.results);
@@ -47,7 +50,13 @@ const App = ()  => {
   return (
     <div>
       <Header onSearch={searchPhotos} />
-      {data.length ? (
+      {!data.length && isLoaded ? (
+        <NoResults>
+          <MdOutlineReportGmailerrorred size={20} />
+          <p>No results found for </p>
+          <span>{phrase}</span>
+        </NoResults>
+      ) : (
         <>
           <Results>
             <Icon>
@@ -55,7 +64,7 @@ const App = ()  => {
             </Icon>
             <Stats>
               <p>Photos:</p>
-              <p>{stats.total}</p>
+              <p>{stats && stats.total}</p>
             </Stats>
           </Results>
           <Gallery>
@@ -63,24 +72,27 @@ const App = ()  => {
               dataLength={data.length}
               next={() => getPhotos()}
               hasMore={true}
-              loader={<h2>...loading</h2>}
+              loader={
+                <LoadContainer>
+                  <Loader />
+                </LoadContainer>
+              }
             >
               <Images data={data} />
             </InfiniteScroll>
           </Gallery>
         </>
-      ) : (
-        <NoResults>
-          <MdOutlineReportGmailerrorred size={20} />
-          <p>No results found for </p>
-          <span>{phrase}</span>
-        </NoResults>
       )}
     </div>
   );
 }
 
 export default App;
+
+const LoadContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`
 
 const Results = styled.div`
   border-bottom: 1px solid #f2f2f2;

@@ -18,6 +18,13 @@ const SearchBar = ({onSearch}) => {
       }
     };
 
+    const handleKeypress = (e) => {
+      if (e.keyCode === 13) {
+        handleSubmit();
+        e.target.blur();
+      }
+    };
+
   return (
     <HeaderContainer>
       <TitleContainer>
@@ -35,9 +42,10 @@ const SearchBar = ({onSearch}) => {
             <input
               name="text"
               placeholder="Search free high-resolution photos"
-              autoComplete='off'
+              autoComplete="off"
               value={queryInput}
               onChange={(e) => setQueryResults(e.target.value)}
+              onKeyPress={handleKeypress}
             />
             <button type="submit">
               <BsSearch />
@@ -54,7 +62,7 @@ export default SearchBar
 const HeaderContainer = styled.div`
   position: relative;
   width: 100%;
-  min-height: 600px;
+  height: 400px;
   background: #000;
   display: flex;
   flex-direction: column;
@@ -67,11 +75,19 @@ const HeaderContainer = styled.div`
     left: 0;
     background-image: url(${background});
     width: 100%;
-    min-height: 600px;
+    height: 400px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: .4;
+    opacity: 0.4;
+
+    @media screen and (max-width: 480px) {
+      height: 400px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    height: 400px;
   }
 `;
 
@@ -120,7 +136,7 @@ const Form = styled.form`
   z-index: 100;
   margin-top: 2rem;
   background-color: #fff;
-  width: 35vw;
+  width: 40vw;
   border-radius: 5px;
   padding: 0.8rem;
 
@@ -145,7 +161,11 @@ const Form = styled.form`
     background-color: #fff;
   }
 
-  @media screen and (max-width: 800px) {
-    width: 70vw;
+  @media screen and (max-width: 1000px) {
+    width: 60vw;
+  }
+
+  @media screen and (max-width: 500px) {
+    width: 80vw;
   }
 `;
